@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honeypot website</title>
+</head>
+<body>
+    <button onclick="openNewTab()">Open captcha</button>
+
+    <script>
+        function openNewTab() {
+            const newWindow = window.open('http://localhost:5500/testcase/captcha.html', '_blank');
+            window.location.href = 'http://localhost:5500/testcase/authorization.html';
+        }
+    </script>
+</body>
+</html>
+
+
+<div id="protector">
+    <a href="/" target="_blank">Перейти к сайту</a>
+  </div>
+  
+  <script>
+    if (top.document.domain == document.domain) {
+      protector.remove();
+    }
+
+    if (top != window) {
+        top.location = window.location;
+    }
+  </script>

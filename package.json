@@ -1,0 +1,19 @@
+{
+  "name": "ClickjackingPrevention",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/iamNNP/ClickjackingPrevention.git",
+  "author": "iamNNP <alexander.markovskiy@mail.ru>",
+  "license": "MIT",
+  "devDependencies": {
+    "terser-webpack-plugin": "^5.3.11",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1"
+  },
+  "scripts": {
+    "build": "node ./build.js"
+  },
+  "dependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
