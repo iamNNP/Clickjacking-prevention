@@ -1,1 +1,1 @@
-Just run yarn build
+To start run yarn build
