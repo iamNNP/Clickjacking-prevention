@@ -4,6 +4,7 @@ There are two ways to use it:
 1. You are a simple user and want to secure yourself on any site
 2. You are a developer and want to secure your users on your sites
 
+Instruction: 
 1. A simple user
     1) Just add "Clickjacking and DoubleClickjacking Defender" in chrome use switchers to activate protection
     2) You may clone this repository "git clone https://github.com/iamNNP/Clickjacking-prevention.git" locally
