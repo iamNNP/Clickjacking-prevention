@@ -1,53 +1,51 @@
-const esbuild = require("esbuild");
 const fs = require("fs");
+const path = require("path");
+const { minify } = require("terser");
 
-const configPath = "./src/config.json";
-const outputDir = "./dist";
-const clickJackingOutputFile = `${outputDir}/clickJackingPrevention.min.js`;
-const doubleClickJackingOutputFile = `${outputDir}/doubleClickJackingPrevention.min.js`;
+// Load config.json
+const configPath = "./config.json";
+let config = {
+    doubleClickJacking: true,
+    warningMessage: "Clickjacking detected! This page is being loaded in an iframe.",
+    clickJacking: true,
+    mouseDelay: 777
+};
 
-if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir);
+if (fs.existsSync(configPath)) {
+    const configFile = fs.readFileSync(configPath, "utf8");
+    config = JSON.parse(configFile);
 }
 
-const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
-const script = fs.readFileSync("./src/clickJackingPrevention.js", "utf8");
+// Read source files
+const srcDir = "./src";
+const distDir = "./dist";
 
-const modifiedScript = script.replace(
-    'fetch("./config.json")',
-    `Promise.resolve(${JSON.stringify(config)})`
-);
-
-const tempFile = "./temp_index.js";
-fs.writeFileSync(tempFile, modifiedScript);
-
-esbuild.build({
-    entryPoints: [tempFile],
-    outfile: clickJackingOutputFile,
-    minify: true,
-    bundle: true,
-    platform: "browser",
-})
-    .then(() => {
-        console.log(`✅ Built: ${clickJackingOutputFile}`);
-        fs.unlinkSync(tempFile); // Clean up
-    })
-    .catch((error) => {
-        console.error("❌ Build failed:", error);
-    });
-
-if (config.doubleClickJacking) {
-    esbuild.build({
-        entryPoints: ["./src/doubleClickJackingPrevention.js"],
-        outfile: doubleClickJackingOutputFile,
-        minify: true,
-        bundle: true,
-        platform: "browser",
-    }).then(() => {
-        console.log(`✅ Built: ${doubleClickJackingOutputFile}`);
-    }).catch((error) => {
-        console.error("❌ DoubleClickJacking build failed:", error);
-    });
-} else {
-    console.log("ℹ️ DoubleClickJacking protection is disabled in config.json.");
+// Ensure the dist directory exists
+if (!fs.existsSync(distDir)) {
+    fs.mkdirSync(distDir);
 }
+
+fs.readdirSync(srcDir).forEach(async (file) => {
+    if (file.endsWith(".js")) {
+        const filePath = path.join(srcDir, file);
+        const outputFilePath = path.join(distDir, file.replace(".js", ".min.js"));
+
+        let code = fs.readFileSync(filePath, "utf8");
+
+        // Inject config values into the code
+        code = code.replace(/__CLICKJACKING_ENABLED__/g, config.clickJacking)
+                   .replace(/__DOUBLECLICKJACKING_ENABLED__/g, config.doubleClickJacking)
+                   .replace(/__WARNING_MESSAGE__/g, JSON.stringify(config.warningMessage))
+                   .replace(/__MOUSE_DELAY__/g, config.mouseDelay * 1000);
+
+        // Minify JavaScript
+        const result = await minify(code);
+
+        if (result.code) {
+            fs.writeFileSync(outputFilePath, result.code, "utf8");
+            console.log(`✅ Minified: ${file} -> ${outputFilePath}`);
+        } else {
+            console.error(`❌ Failed to minify: ${file}`);
+        }
+    }
+});

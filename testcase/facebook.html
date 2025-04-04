@@ -1,7 +1,27 @@
 <!DOCTYPE HTML>
 <html>
 <body style="margin:11px; padding:11px">
-  <script src="../dist/clickjackingprevention.min.js"></script>
-  <input type="button" onclick="alert('Вы лайкнули чей-то пост...Или кто-то лайкнул за вас???')" value="Like">
+  <!-- <script src="../dist/clickjackingprevention.min.js"></script> -->
+  <style>
+    #protector {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 99999999;
+    }
+  </style>
+  
+  <div id="protector">
+    <a href="/" target="_blank">Перейти к сайту</a>
+  </div>
+  
+  <script>
+    if (top.document.domain == document.domain) {
+      protector.remove();
+    }
+  </script>
+  <input type="button" onclick="alert('Вы лайкнули чей-то пост...Или кто-то лайкнул за вас???')" value="Like" style="width: 100px">
 </body>
 </html>

@@ -4,11 +4,6 @@
   <meta charset="UTF-8">
 </head>
 <body>
-  <!-- <script>
-    window.onbeforeunload = function() {
-      return false;
-    };
-  </script> -->
   <style>
     iframe {
       width: 400px;
@@ -21,8 +16,9 @@
     }
   </style>
   <div>РАЗБОГАТЕТЬ за 1 КЛИК</div>
-  <iframe sandbox="allow-scripts allow-forms" src="http://localhost:5500/testcase/facebook.html"></iframe>
+  <iframe src="http://127.0.0.1:5500/testcase/facebook.html"></iframe>
 
-  <button>Нажмите сюда!</button>
+  <!-- <button>Нажмите сюда!</button> -->
+  <input type="button" onclick="alert('Click')" value="Нажмите сюда!">
 </body>
 </html>

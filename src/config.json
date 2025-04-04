@@ -1,9 +1,0 @@
-{
-    "mode": "overlay",
-    "doubleClickJacking": true, 
-    "warningMessage": "Clickjacking detected! This page is being loaded in an iframe.", 
-    "securityHeaders": {
-        "X-Frame-Options": "DENY",
-        "Set-Cookie": "session=secureValue; HttpOnly; Secure; SameSite=Strict"
-    }
-}

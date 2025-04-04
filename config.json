@@ -1,0 +1,6 @@
+{
+    "doubleClickJacking": true,
+    "clickJacking": true,
+    "warningMessage": "Clickjacking detected! This page is being loaded in an iframe.",
+    "mouseDelay": 777
+}
