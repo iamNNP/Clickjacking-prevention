@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authorization Input</title>
+    <!-- <script src="../dist/doubleClickJackingPrevention.min.js"></script> -->
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .auth-container {
+            text-align: center;
+        }
+        .auth-input {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Authorization</h1>
+        <input type="text" class="auth-input" placeholder="Enter something..." onfocus="authorize()">
+    </div>
+
+    <script>
+        function authorize() {
+            alert('Double clickjacking worked on input field!');
+        }
+    </script>
+</body>
+</html>

@@ -17,7 +17,15 @@ function createOverlay() {
     overlay.style.height = "100vh";
     overlay.style.backgroundColor = "rgba(128, 128, 128, 0.4)";
     overlay.style.zIndex = "9999999";
-    overlay.style.transition = "opacity 0.5s ease-out";
+    // overlay.style.transition = "opacity 0.5s ease-out";
+    overlay.innerHTML = "<h3>CJ type attack detected! Press CJ to deactivate overlay</h3>";
+    overlay.style.color = "white";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.font = "Roboto";
+    overlay.style.fontSize = "20px";
+    overlay.style.fontWeight = "bold";
     document.body.appendChild(overlay);
   }
 }
@@ -28,10 +36,22 @@ function removeOverlay() {
     setTimeout(() => {
       if (overlay) overlay.remove();
       overlay = null;
-    }, 500);
+    }, mouseDelay);
     clearTimeout(removeOverlayTimeout);
   }
 }
+
+document.addEventListener("keydown", (event) => {
+  if (event.key.toLowerCase() === "c") {
+      document.addEventListener("keydown", function cjListener(e) {
+          if (e.key.toLowerCase() === "j") {
+              removeOverlay();
+              console.warn("Clickjacking protection removed via CJ shortcut.");
+              document.removeEventListener("keydown", cjListener);
+          }
+      }, { once: true });
+  }
+});
 
 function initializeProtection() {
   createOverlay();

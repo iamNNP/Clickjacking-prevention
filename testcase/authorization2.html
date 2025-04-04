@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Element Click Test</title>
+    <!-- <script src="../dist/doubleClickJackingPrevention.min.js"></script> -->
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .random-container {
+            text-align: center;
+        }
+        .mystery-element {
+            padding: 15px;
+            font-size: 18px;
+            background-color: lightblue;
+            cursor: pointer;
+            display: inline-block;
+            border: 1px solid blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="random-container">
+        <h1>Random Element</h1>
+        <div class="mystery-element" onclick="randomAction()">Click Me!</div>
+    </div>
+
+    <script>
+        function randomAction() {
+            alert('Double clickjacking worked on mystery element!');
+        }
+    </script>
+</body>
+</html>

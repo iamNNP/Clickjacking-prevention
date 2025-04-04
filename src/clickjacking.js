@@ -24,6 +24,26 @@
             document.body.appendChild(overlay);
         }
     }
+    
+    document.addEventListener("keydown", (event) => {
+        if (event.key.toLowerCase() === "c") {
+            document.addEventListener("keydown", function cjListener(e) {
+                if (e.key.toLowerCase() === "j") {
+                    removeOverlay();
+                    console.warn("Clickjacking protection removed via CJ shortcut.");
+                    document.removeEventListener("keydown", cjListener);
+                }
+            }, { once: true });
+        }
+    });
+    
+    function removeOverlay() {
+        const overlays = document.querySelectorAll(".clickjacking-overlay");
+        overlays.forEach(overlay => {
+            overlay.style.opacity = "0";
+            setTimeout(() => overlay.remove(), 500);
+        });
+    }    
 
     window.addEventListener("DOMContentLoaded", function() {
         fetch('config.json')
