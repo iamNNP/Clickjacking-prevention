@@ -15,7 +15,7 @@
       margin-bottom: 10px;
       font-size: 16px;
     }
-    .toggle-container {
+    .container {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -63,10 +63,6 @@
     label {
       font-size: 14px;
     }
-    .timer-container {
-      margin-top: 10px;
-      font-size: 14px;
-    }
     #timeInput {
       width: 50px;
       text-align: center;
@@ -78,7 +74,7 @@
 <body>
   <h3>Clickjacking Protection</h3>
 
-  <div class="toggle-container">
+  <div class="container">
     <label>Clickjacking</label>
     <label class="switch">
       <input type="checkbox" id="clickjackingToggle">
@@ -86,7 +82,7 @@
     </label>
   </div>
 
-  <div class="toggle-container">
+  <div class="container">
     <label>DoubleClickJacking</label>
     <label class="switch">
       <input type="checkbox" id="doubleClickToggle">
@@ -94,13 +90,21 @@
     </label>
   </div>
 
-  <div class="timer-container">
+  <div class="container">
     <label>Mouse movement time: </label>
-    <input type="number" id="timeInput" min="1" max="9999"> sec
+    <input type="number" id="mouseDelay" min="1" max="9999"> ms
   </div>
 
-  <p id="statusText">Loading...</p>
-
+  <div class="container">
+    <label>Mouse movement time: </label>
+    <input type="color" id="colorInput" value="#ffffff">
+  </div>
+  
+  <div class="container">
+    <label>Overlay opacity: </label>
+    <input type="number" id="opacityInput" min="1" max="100">
+  </div>
   <script src="popup.js"></script>
+  <p id="statusText">Loading...</p>
 </body>
 </html>

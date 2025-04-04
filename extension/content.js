@@ -5,6 +5,8 @@ let removeOverlayTimeout;
 let mouseDelay = 777;
 let mouseMoved = false;
 let mouseClicked = false;
+let colorInput = "rgba(128, 128, 128, 0.4)";
+let opacityInput = 50;
 
 function createOverlay() {
   if (!overlay) {
@@ -15,10 +17,11 @@ function createOverlay() {
     overlay.style.left = "0";
     overlay.style.width = "100vw";
     overlay.style.height = "100vh";
-    overlay.style.backgroundColor = "rgba(128, 128, 128, 0.4)";
+    overlay.style.backgroundColor = colorInput;
+    overlay.style.opacity = opacityInput / 100;
     overlay.style.zIndex = "9999999";
     // overlay.style.transition = "opacity 0.5s ease-out";
-    overlay.innerHTML = "<h3>CJ type attack detected! Press CJ to deactivate overlay</h3>";
+    overlay.innerHTML = "<h3>Press C + J or move mouse to deactivate overlay</h3>";
     overlay.style.color = "white";
     overlay.style.display = "flex";
     overlay.style.alignItems = "center";
@@ -65,6 +68,7 @@ function initializeProtection() {
 
   if (clickJackingProtection && isIframe) {
     console.warn("ClickJacking protection active: Overlay stays.");
+    overlay.innerHTML = "<h3>Clickjacking attack detected! Press C + J to deactivate overlay</h3>";
     return;
   }
 
@@ -99,13 +103,17 @@ chrome.runtime.onMessage.addListener((request) => {
   doubleClickProtection = request.doubleClickProtection;
   clickJackingProtection = request.clickJackingProtection;
   mouseDelay = request.mouseDelay || 777;
+  colorInput = request.colorInput;
+  opacityInput = request.opacityInput || 50;
   initializeProtection();
 });
 
 // Load settings from storage
-chrome.storage.sync.get(["doubleClickProtection", "clickJackingProtection", "mouseDelay"], (data) => {
+chrome.storage.sync.get(["doubleClickProtection", "clickJackingProtection", "mouseDelay", "colorInput", "opacityInput"], (data) => {
   doubleClickProtection = data.doubleClickProtection !== false;
   clickJackingProtection = data.clickJackingProtection !== false;
   mouseDelay = data.mouseDelay || 777;
+  colorInput = data.colorInput;
+  opacityInput = data.opacityInput || 50;
   initializeProtection();
 });

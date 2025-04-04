@@ -1,18 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
   const clickjackingToggle = document.getElementById("clickjackingToggle");
   const doubleClickToggle = document.getElementById("doubleClickToggle");
-  const timeInput = document.getElementById("timeInput");
+  const mouseDelay = document.getElementById("mouseDelay");
   const statusText = document.getElementById("statusText");
+  const colorInput = document.getElementById("colorInput");
+  const opacityInput = document.getElementById("opacityInput");
 
   // Load saved settings
-  chrome.storage.sync.get(["clickJackingProtection", "doubleClickProtection", "mouseMoveTime"], (data) => {
+  chrome.storage.sync.get(["clickJackingProtection", "doubleClickProtection", "mouseDelay", "colorInput", "opacityInput"], (data) => {
     clickjackingToggle.checked = data.clickJackingProtection !== false;
     doubleClickToggle.checked = data.doubleClickProtection !== false;
-    timeInput.value = data.mouseMoveTime || 777; // Default to 777 seconds
+    mouseDelay.value = data.mouseDelay || 777; // Default to 777 seconds
+    colorInput.value = data.colorInput || "#ffffff";
+    opacityInput.value = data.opacityInput || 50;
     updateStatusText();
   });
 
-  // Save settings when toggles change
   clickjackingToggle.addEventListener("change", () => {
     chrome.storage.sync.set({ clickJackingProtection: clickjackingToggle.checked });
     sendUpdate();
@@ -23,10 +26,23 @@ document.addEventListener("DOMContentLoaded", () => {
     sendUpdate();
   });
 
-  timeInput.addEventListener("change", () => {
-    let time = Math.max(1, Math.min(9999, parseInt(timeInput.value, 10) || 777));
-    timeInput.value = time;
-    chrome.storage.sync.set({ mouseMoveTime: time });
+  mouseDelay.addEventListener("change", () => {
+    let time = Math.max(1, Math.min(9999, parseInt(mouseDelay.value, 10) || 777));
+    mouseDelay.value = time;
+    chrome.storage.sync.set({ mouseDelay: time });
+    sendUpdate();
+  });
+
+  colorInput.addEventListener("change", () => {
+    const color = colorInput.value;
+    chrome.storage.sync.set({ colorInput: color });
+    sendUpdate();
+  });
+
+  opacityInput.addEventListener("change", () => {
+    let opacity = opacityInput.value;
+    opacityInput.value = opacity;
+    chrome.storage.sync.set({ opacityInput: opacity });
     sendUpdate();
   });
 
@@ -40,7 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.tabs.sendMessage(tabs[0].id, {
         clickJackingProtection: clickjackingToggle.checked,
         doubleClickProtection: doubleClickToggle.checked,
-        mouseMoveTime: parseInt(timeInput.value, 10) || 777
+        mouseDelay: parseInt(mouseDelay.value, 10) || 777, 
+        colorInput: colorInput.value, 
+        opacityInput: opacityInput.value || 50
       });
     });
   }

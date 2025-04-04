@@ -24,4 +24,4 @@ chrome.webRequest.onHeadersReceived.addListener(
     },
     { urls: ["<all_urls>"] },
     ["blocking", "responseHeaders"]
-  );
+);
