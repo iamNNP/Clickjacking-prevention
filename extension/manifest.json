@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "DoubleClickJack Protector",
+  "name": "Clickjacking and DoubleClickjacking Defender",
   "version": "1.0",
   "description": "Simple double-clickjacking protection",
   "permissions": ["storage"],
