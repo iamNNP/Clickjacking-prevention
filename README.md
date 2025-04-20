@@ -9,11 +9,7 @@
 
 ### Вариант 1: Расширение для браузера (для пользователей)
 #### Установка в Chrome/Edge
-1. **Из Chrome Web Store** (рекомендуется):
-   - Найдите "ClickJacking Defender" в магазине расширений
-   - Нажмите "Добавить в Chrome"
-
-2. **Ручная установка** (для разработки):
+**Ручная установка** (для разработки):
    ```bash
    git clone https://github.com/iamNNP/Clickjacking-prevention.git
    ```
@@ -70,7 +66,7 @@
 window.dcjConfig = {
   enabled: true,
   mouseDelay: 1000,
-  overlayColor: 'rgba(255,0,0,0.3)'
+  overlayColor: 'rgba(128,128,128,0.5)'
 };
 ```
 
@@ -97,10 +93,9 @@ window.dcjConfig = {
 
 2. **Для важных действий**:
    ```javascript
-   // Усиленная защита для страниц входа
    window.dcjConfig = {
-     mouseDelay: 1000,  // Задержка 1 секунда
-     overlayColor: 'rgba(255,0,0,0.7)'  // Более заметное предупреждение
+     mouseDelay: 1000,
+     overlayColor: 'rgba(128,128,128,0.5)'
    };
    ```
 
@@ -118,138 +113,10 @@ window.dcjConfig = {
 
 Для получения помощи:
 - [Создайте Issue](https://github.com/iamNNP/Clickjacking-prevention/issues)
-- Email: security-support@example.com
+- Email: vgj6b@ptct.net
 
 ---
 
 **Версия**: 2.1.0  
 **Последнее обновление**: 2023-11-15  
 **Лицензия**: MIT
-
-# ClickJacking Defender - Comprehensive Protection Suite
-
-## Overview
-A dual-layer security solution offering:
-- **Clickjacking Protection**: Defends against UI redressing attacks
-- **DoubleClickjacking Protection**: Prevents rapid-click deception attacks
-
-## Installation Options
-
-### Option 1: Browser Extension (End Users)
-#### Chrome/Edge Installation
-1. **From Chrome Web Store** (recommended):
-   - Search for "ClickJacking Defender" in Chrome Web Store
-   - Click "Add to Chrome"
-
-2. **Manual Installation** (development version):
-   ```bash
-   git clone https://github.com/iamNNP/Clickjacking-prevention.git
-   ```
-   - Navigate to `chrome://extensions`
-   - Enable "Developer mode" (toggle in top-right)
-   - Click "Load unpacked"
-   - Select the cloned repository folder
-
-### Option 2: Developer Integration
-#### Quick Start
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/iamNNP/Clickjacking-prevention.git
-   cd Clickjacking-prevention
-   ```
-
-2. Build production scripts:
-   ```bash
-   npm install  # If using custom build options
-   node build.js
-   ```
-
-3. Include in your project:
-   ```html
-   <!-- For clickjacking protection -->
-   <script src="dist/clickjacking.min.js"></script>
-   
-   <!-- For doubleclick protection -->
-   <script src="dist/doubleclickjacking.min.js"></script>
-   ```
-
-## Configuration
-
-### Browser Extension
-Use the popup UI to:
-- Toggle protection types
-- Adjust sensitivity (mouse delay)
-- Customize overlay appearance
-
-### Developer Integration
-Configure via `config.json`:
-```json
-{
-  "clickJacking": true,
-  "doubleClickJacking": true,
-  "warningMessage": "Security alert: Possible clickjacking attempt",
-  "mouseDelay": 500,
-  "overlayColor": "rgba(128,128,128,0.5)"
-}
-```
-
-Or programmatically:
-```javascript
-window.dcjConfig = {
-  enabled: true,
-  mouseDelay: 1000,
-  overlayColor: 'rgba(255,0,0,0.3)'
-};
-```
-
-## Features
-
-| Protection Type      | Activation Method          | Deactivation Trigger               |
-|----------------------|----------------------------|------------------------------------|
-| Clickjacking         | Detects iframes            | Same-origin verification           |
-| DoubleClickjacking   | Page load                  | Sustained mouse movement (500ms+)  |
-
-**Advanced Options**:
-- `C + J` keyboard shortcut for manual override
-- Customizable visual warnings
-- Dynamic content detection
-
-## Best Practices
-
-1. **For Maximum Protection**:
-   ```html
-   <!-- Use both protections -->
-   <script src="clickjacking.min.js"></script>
-   <script src="doubleclickjacking.min.js"></script>
-   ```
-
-2. **For Sensitive Actions**:
-   ```javascript
-   // Configure tighter security for login pages
-   window.dcjConfig = {
-     mouseDelay: 1000,  // 1 second delay
-     overlayColor: 'rgba(255,0,0,0.7)'  // More visible warning
-   };
-   ```
-
-## Troubleshooting
-
-**Issue**: Overlay not disappearing
-- Verify mouse movement is continuous for the configured delay period
-- Check console for error messages (`F12 > Console`)
-
-**Issue**: Conflicts with other scripts
-- Ensure proper load order (security scripts first)
-- Adjust z-index values if needed
-
-## Support
-
-For additional help:
-- [Open an Issue](https://github.com/iamNNP/Clickjacking-prevention/issues)
-- Email: security-support@example.com
-
----
-
-**Version**: 2.1.0  
-**Last Updated**: 2023-11-15  
-**License**: MIT
