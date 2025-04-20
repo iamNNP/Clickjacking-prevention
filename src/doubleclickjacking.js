@@ -1,60 +1,54 @@
 (function() {
-    let overlay;
-    let removeOverlayTimeout;
-    let mouseMoved = false;
-    let mouseClicked = false;
-    let mouseDelay = 777 * 1000; // Default 777 seconds
+    const config = {
+        enabled: __DOUBLECLICKJACKING_ENABLED__,
+        mouseDelay: __MOUSE_DELAY__,
+        overlayColor: __OVERLAY_COLOR__,
+        opacity: __OVERLAY_OPACITY__
+    };
+
+    let overlay = null;
+    let timeout = null;
 
     function createOverlay() {
+        if (overlay) return;
+        
         overlay = document.createElement("div");
-        overlay.style.position = "fixed";
-        overlay.style.top = "0";
-        overlay.style.left = "0";
-        overlay.style.width = "100vw";
-        overlay.style.height = "100vh";
-        overlay.style.backgroundColor = "rgba(128, 128, 128, 0.4)";
-        overlay.style.zIndex = "9999999";
+        overlay.className = "dcj-overlay";
+        Object.assign(overlay.style, {
+            position: "fixed",
+            top: "0",
+            left: "0",
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: config.overlayColor,
+            opacity: config.opacity,
+            zIndex: "9999998",
+            pointerEvents: "auto"
+        });
         document.body.appendChild(overlay);
     }
 
     function removeOverlay() {
-        if (overlay) {
-            overlay.style.opacity = "0";
-            setTimeout(() => {
-                if (overlay) overlay.remove();
-                overlay = null;
-            }, 500);
-        }
+        if (!overlay) return;
+        overlay.style.opacity = "0";
+        setTimeout(() => overlay.remove(), 300);
+        clearTimeout(timeout);
     }
 
-    function startProtection() {
+    function initialize() {
+        if (!config.enabled) return;
+        
         createOverlay();
         
         window.addEventListener("mousemove", () => {
-            if (!mouseMoved) {
-                mouseMoved = true;
-                removeOverlayTimeout = setTimeout(removeOverlay, mouseDelay);
-            }
-        }, { once: true });
-
-        window.addEventListener("mousedown", () => {
-            if (!mouseClicked) {
-                mouseClicked = true;
-                removeOverlayTimeout = setTimeout(removeOverlay, mouseDelay);
-            }
+            clearTimeout(timeout);
+            timeout = setTimeout(removeOverlay, config.mouseDelay);
         }, { once: true });
     }
 
-    window.addEventListener("DOMContentLoaded", function() {
-        fetch('config.json')
-            .then(response => response.json())
-            .then(config => {
-                if (config.doubleClickJacking) {
-                    mouseDelay = config.mouseDelay * 1000;
-                    startProtection();
-                }
-            })
-            .catch(() => console.warn("Config file not found, using defaults."));
-    });
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initialize);
+    } else {
+        initialize();
+    }
 })();
-

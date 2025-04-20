@@ -1,6 +1,7 @@
 {
-    "doubleClickJacking": true,
     "clickJacking": true,
-    "warningMessage": "Clickjacking detected! This page is being loaded in an iframe.",
-    "mouseDelay": 777
-}
+    "doubleClickJacking": true,
+    "warningMessage": "Press C + J or move mouse to deactivate overlay",
+    "overlayColor": "rgba(128, 128, 128, 0.4)",
+    "mouseDelay": 1000
+  }

@@ -1,58 +1,74 @@
 (function() {
+    const config = {
+        clickJacking: __CLICKJACKING_ENABLED__,
+        warningMessage: __WARNING_MESSAGE__,
+        overlayColor: __OVERLAY_COLOR__
+    };
+
+    let overlay = null;
+    let cjListener = null;
+
     function detectIframes() {
         try {
-            return top.document.domain !== document.domain;
+            return window !== top || top.document.domain !== document.domain;
         } catch (e) {
-            return true; 
+            return true;
         }
     }
 
-    function createOverlay(message) {
-        if (detectIframes()) {
-            let overlay = document.createElement("div");
-            overlay.style.position = "fixed";
-            overlay.style.top = "0";
-            overlay.style.left = "0";
-            overlay.style.width = "100vw";
-            overlay.style.height = "100vh";
-            overlay.style.backgroundColor = "rgba(128, 128, 128, 0.6)";
-            overlay.style.zIndex = "9999999";
-            overlay.style.display = "flex";
-            overlay.style.justifyContent = "center";
-            overlay.style.alignItems = "center";
-            overlay.style.color = "#fff";
+    function createOverlay() {
+        if (!overlay && detectIframes()) {
+            overlay = document.createElement("div");
+            overlay.className = "clickjacking-overlay";
+            Object.assign(overlay.style, {
+                position: "fixed",
+                top: "0",
+                left: "0",
+                width: "100vw",
+                height: "100vh",
+                backgroundColor: config.overlayColor,
+                zIndex: "9999999",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#fff",
+                fontSize: "20px",
+                fontWeight: "bold"
+            });
+            overlay.textContent = config.warningMessage;
             document.body.appendChild(overlay);
+            return true;
+        }
+        return false;
+    }
+
+    function removeOverlay() {
+        if (overlay) {
+            overlay.style.opacity = "0";
+            setTimeout(() => overlay.remove(), 300);
+        }
+        if (cjListener) {
+            document.removeEventListener("keydown", cjListener);
         }
     }
-    
-    document.addEventListener("keydown", (event) => {
-        if (event.key.toLowerCase() === "c") {
-            document.addEventListener("keydown", function cjListener(e) {
-                if (e.key.toLowerCase() === "j") {
-                    removeOverlay();
-                    console.warn("Clickjacking protection removed via CJ shortcut.");
-                    document.removeEventListener("keydown", cjListener);
-                }
-            }, { once: true });
-        }
-    });
-    
-    function removeOverlay() {
-        const overlays = document.querySelectorAll(".clickjacking-overlay");
-        overlays.forEach(overlay => {
-            overlay.style.opacity = "0";
-            setTimeout(() => overlay.remove(), 500);
-        });
-    }    
 
-    window.addEventListener("DOMContentLoaded", function() {
-        fetch('config.json')
-            .then(response => response.json())
-            .then(config => {
-                if (config.clickJacking) {
-                    createOverlay(config.warningMessage);
+    function initialize() {
+        if (!config.clickJacking) return;
+        
+        if (createOverlay()) {
+            document.addEventListener("keydown", (e) => {
+                if (e.key.toLowerCase() === "c") {
+                    document.addEventListener("keydown", (e2) => {
+                        if (e2.key.toLowerCase() === "j") removeOverlay();
+                    }, { once: true });
                 }
-            })
-            .catch(() => console.warn("Config file not found, using defaults."));
-    });
+            });
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initialize);
+    } else {
+        initialize();
+    }
 })();

@@ -2,50 +2,84 @@ const fs = require("fs");
 const path = require("path");
 const { minify } = require("terser");
 
-// Load config.json
-const configPath = "./config.json";
-let config = {
+const defaultConfig = {
+    clickJacking: true,
     doubleClickJacking: true,
     warningMessage: "Clickjacking detected! This page is being loaded in an iframe.",
-    clickJacking: true,
-    mouseDelay: 777
+    mouseDelay: 777,
+    overlayColor: "rgba(128, 128, 128, 0.4)",
+    opacity: 0.4
 };
 
+let config = { ...defaultConfig };
+const configPath = path.join(__dirname, "config.json");
+
 if (fs.existsSync(configPath)) {
-    const configFile = fs.readFileSync(configPath, "utf8");
-    config = JSON.parse(configFile);
+    try {
+        const configFile = fs.readFileSync(configPath, "utf8");
+        config = { ...defaultConfig, ...JSON.parse(configFile) };
+    } catch (e) {
+        console.error("❌ Error loading config.json, using defaults");
+    }
+} else {
+    fs.writeFileSync(configPath, JSON.stringify(defaultConfig, null, 2));
+    console.log("ℹ️ Created default config.json");
 }
 
-// Read source files
-const srcDir = "./src";
-const distDir = "./dist";
+const builds = [
+    {
+        name: "clickjacking",
+        src: "./src/clickjacking.js",
+        dist: "./dist/clickjacking.min.js",
+        replacements: {
+            "__CLICKJACKING_ENABLED__": config.clickJacking,
+            "__WARNING_MESSAGE__": JSON.stringify(config.warningMessage),
+            "__OVERLAY_COLOR__": JSON.stringify(config.overlayColor)
+        }
+    },
+    {
+        name: "doubleclickjacking",
+        src: "./src/doubleclickjacking.js",
+        dist: "./dist/doubleclickjacking.min.js",
+        replacements: {
+            "__DOUBLECLICKJACKING_ENABLED__": config.doubleClickJacking,
+            "__MOUSE_DELAY__": config.mouseDelay,
+            "__OVERLAY_COLOR__": JSON.stringify(config.overlayColor),
+            "__OVERLAY_OPACITY__": config.opacity
+        }
+    }
+];
 
-// Ensure the dist directory exists
+const distDir = path.join(__dirname, "dist");
 if (!fs.existsSync(distDir)) {
     fs.mkdirSync(distDir);
 }
 
-fs.readdirSync(srcDir).forEach(async (file) => {
-    if (file.endsWith(".js")) {
-        const filePath = path.join(srcDir, file);
-        const outputFilePath = path.join(distDir, file.replace(".js", ".min.js"));
-
-        let code = fs.readFileSync(filePath, "utf8");
-
-        // Inject config values into the code
-        code = code.replace(/__CLICKJACKING_ENABLED__/g, config.clickJacking)
-                   .replace(/__DOUBLECLICKJACKING_ENABLED__/g, config.doubleClickJacking)
-                   .replace(/__WARNING_MESSAGE__/g, JSON.stringify(config.warningMessage))
-                   .replace(/__MOUSE_DELAY__/g, config.mouseDelay * 1000);
-
-        // Minify JavaScript
-        const result = await minify(code);
-
-        if (result.code) {
-            fs.writeFileSync(outputFilePath, result.code, "utf8");
-            console.log(`✅ Minified: ${file} -> ${outputFilePath}`);
-        } else {
-            console.error(`❌ Failed to minify: ${file}`);
+async function buildFiles() {
+    for (const build of builds) {
+        try {
+            let code = fs.readFileSync(build.src, "utf8");
+            
+            for (const [key, value] of Object.entries(build.replacements)) {
+                code = code.replace(new RegExp(key, "g"), value);
+            }
+            
+            const result = await minify(code, {
+                mangle: true,
+                compress: true
+            });
+            
+            if (result.code) {
+                fs.writeFileSync(build.dist, result.code);
+                console.log(`✅ Built: ${build.name} -> ${build.dist}`);
+            } else {
+                console.error(`❌ Minification failed for ${build.name}`);
+            }
+        } catch (err) {
+            console.error(`❌ Build failed for ${build.name}:`, err.message);
         }
     }
-});
+}
+
+// Run build
+buildFiles();
